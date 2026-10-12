@@ -1,0 +1,325 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AlgoMentor AI — Interview Architecture Guide</title>
+<style>
+  :root { --ink:#142438; --muted:#52657a; --line:#dbe5ed; --navy:#10253b; --blue:#146c91; --teal:#0d8b83; --gold:#d19a38; --paper:#fff; --pale:#f3f7fa; --red:#b34949; }
+  * { box-sizing:border-box; }
+  html { background:#e9eff3; }
+  body { margin:0 auto; max-width:1080px; background:var(--paper); color:var(--ink); font:14px/1.45 "Segoe UI",Arial,sans-serif; box-shadow:0 16px 60px #14243822; }
+  .cover { min-height:720px; padding:72px 76px; color:#fff; background:radial-gradient(circle at 85% 18%,#197a89 0,transparent 32%),linear-gradient(135deg,#0b2035,#16384f 72%,#0f6670); position:relative; overflow:hidden; }
+  .cover:after { content:""; position:absolute; width:470px; height:470px; border:1px solid #ffffff31; border-radius:50%; right:-120px; top:230px; box-shadow:0 0 0 75px #ffffff0a,0 0 0 150px #ffffff08; }
+  .kicker { letter-spacing:.22em; text-transform:uppercase; font-size:12px; font-weight:700; color:#9ee4df; }
+  .cover h1 { font-size:59px; line-height:1.03; letter-spacing:-.05em; margin:29px 0 15px; max-width:650px; }
+  .cover h1 span { color:#9ee4df; }
+  .cover .deck { max-width:600px; font-size:19px; color:#d5e8ee; }
+  .cover .rule { width:88px; height:5px; background:#f1bd67; border-radius:3px; margin:30px 0; }
+  .cover .meta { display:flex; gap:12px; flex-wrap:wrap; margin-top:45px; }
+  .cover .meta span { border:1px solid #ffffff5a; background:#ffffff12; border-radius:30px; padding:8px 13px; font-size:12px; }
+  .cover .note { position:absolute; bottom:70px; left:76px; max-width:690px; color:#c6dce4; font-size:12px; }
+  main { padding:0 62px 50px; }
+  section { padding:31px 0 17px; border-bottom:1px solid var(--line); break-inside:auto; }
+  section:last-child { border-bottom:0; }
+  .eyebrow { color:var(--teal); text-transform:uppercase; letter-spacing:.16em; font-size:10px; font-weight:800; margin-bottom:7px; }
+  h2 { font-size:27px; line-height:1.15; margin:0 0 12px; color:var(--navy); letter-spacing:-.025em; }
+  h3 { font-size:17px; margin:20px 0 8px; color:var(--navy); }
+  h4 { font-size:13px; margin:14px 0 5px; color:var(--blue); text-transform:uppercase; letter-spacing:.06em; }
+  p { margin:7px 0 11px; }
+  ul,ol { margin:7px 0 11px; padding-left:21px; }
+  li { margin:4px 0; }
+  strong { color:var(--navy); }
+  code { background:#edf3f7; color:#22536a; padding:1px 4px; border-radius:3px; font:11.5px Consolas,monospace; overflow-wrap:anywhere; }
+  .badge { display:inline-block; vertical-align:1px; font-size:9px; font-weight:800; letter-spacing:.045em; border-radius:4px; padding:2px 5px; margin-right:5px; white-space:nowrap; }
+  .implemented { background:#d8f2ea; color:#08765b; }
+  .inferred { background:#e2edfb; color:#2e5d9a; }
+  .recommended { background:#fff0d6; color:#8a5a05; }
+  .ref { display:block; color:#698098; font:10px/1.32 Consolas,monospace; margin-top:4px; overflow-wrap:anywhere; }
+  .lead { font-size:16px; line-height:1.5; color:#38556e; }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:13px; margin:13px 0; }
+  .grid3 { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin:12px 0; }
+  .card { border:1px solid var(--line); border-radius:11px; padding:14px 16px; background:#fff; break-inside:avoid; }
+  .card.tint { background:var(--pale); }
+  .card h3 { margin:0 0 5px; font-size:15px; }
+  .card p:last-child { margin-bottom:0; }
+  .metric { font-size:25px; font-weight:800; color:var(--blue); line-height:1.1; }
+  .metric-label { color:var(--muted); font-size:11px; }
+  .callout { border-left:4px solid var(--teal); padding:10px 14px; background:#edf7f6; margin:12px 0; break-inside:avoid; }
+  .callout.warn { border-color:var(--gold); background:#fff8e9; }
+  .callout.risk { border-color:var(--red); background:#fff0ee; }
+  table { width:100%; border-collapse:collapse; margin:11px 0 16px; font-size:11.5px; break-inside:auto; }
+  th { text-align:left; background:#17364d; color:#fff; padding:8px 9px; font-size:10.5px; }
+  td { border-bottom:1px solid var(--line); vertical-align:top; padding:7px 9px; }
+  tr:nth-child(even) td { background:#f7fafc; }
+  tr { break-inside:avoid; }
+  .small { font-size:11px; color:var(--muted); }
+  .flow { display:flex; align-items:stretch; gap:7px; margin:15px 0; }
+  .flow .step { flex:1; border-radius:9px; padding:11px 8px; text-align:center; background:#e9f3f6; border:1px solid #bcd4df; font-weight:700; font-size:11px; }
+  .flow .arrow { display:flex; align-items:center; color:var(--teal); font-size:21px; }
+  .diagram { border:1px solid #cddde7; border-radius:12px; background:#f7fbfd; padding:12px; margin:14px 0; break-inside:avoid; }
+  .diagram svg { width:100%; height:auto; display:block; }
+  .caption { margin:7px 4px 2px; color:var(--muted); font-size:10.5px; }
+  .qa { border:1px solid var(--line); border-radius:9px; padding:10px 13px; margin:8px 0; break-inside:avoid; }
+  .qa .q { font-weight:750; color:var(--navy); }
+  .qa .a { margin:5px 0; }
+  .qa .follow { color:var(--blue); font-size:11px; }
+  .pagebreak { break-before:page; }
+  .keep { break-inside:avoid; }
+  a { color:#0a6a8b; text-decoration:none; }
+  .footer { color:#6d8293; font-size:10px; margin-top:22px; }
+  @page { size:A4; margin:13mm 12mm 14mm; }
+  @media print { html { background:#fff; } body { max-width:none; box-shadow:none; font-size:11px; } .cover { min-height:255mm; padding:35mm 20mm; break-after:page; } .cover .note { bottom:20mm; left:20mm; } main { padding:0 7mm; } section { padding:14px 0 10px; } .eyebrow,h2,h3 { break-after:avoid; } h2 { font-size:21px; } h3 { font-size:14px; margin:13px 0 5px; } .lead { font-size:12px; } .card { padding:9px 11px; } .grid2,.grid3 { gap:8px; } table { font-size:9px; } th,td { padding:5px 6px; } .ref { font-size:8px; } .qa { padding:7px 9px; } .diagram { padding:8px; } .cover:after { -webkit-print-color-adjust:exact; print-color-adjust:exact; } body,th,.badge,.card,.callout,.diagram { -webkit-print-color-adjust:exact; print-color-adjust:exact; } }
+</style>
+</head>
+<body>
+<header class="cover">
+  <div class="kicker">Source-backed interview field guide · 2026</div>
+  <h1>Explain<br><span>AlgoMentor AI</span><br>with confidence.</h1>
+  <div class="rule"></div>
+  <p class="deck">Architecture, request lifecycles, authentication, data, trade-offs, and the follow-up questions behind a 20–30 minute software engineering interview.</p>
+  <div class="meta"><span>Next.js 15 + React 19</span><span>FastAPI + SQLAlchemy</span><span>PostgreSQL 16 + Redis 7</span><span>Gemini + coding platforms</span></div>
+  <p class="note">Evidence comes from the local AlgoMentor source tree. Each technical claim is marked IMPLEMENTED, INFERRED, or RECOMMENDED. Code locations are included throughout. No live service behavior or production deployment was assumed.</p>
+</header>
+<main>
+<section>
+  <div class="eyebrow">01 / opening answer</div>
+  <h2>Project in 60 seconds</h2>
+  <p class="lead"><span class="badge implemented">IMPLEMENTED</span>AlgoMentor AI is a competitive-programming coaching app. A learner links Codeforces or LeetCode, sees rating and topic analytics, receives a rule-generated study roadmap and problem recommendations, and can use a tutor and code reviewer backed by Gemini when configured.</p>
+  <div class="grid3">
+    <div class="card tint"><div class="metric">6</div><div class="metric-label">protected feature route families</div><p class="small">Profiles, analytics, roadmaps, tutor, code review, and predictions.</p></div>
+    <div class="card tint"><div class="metric">11</div><div class="metric-label">PostgreSQL tables</div><p class="small">Users, tokens, profiles and derived learner artifacts.</p></div>
+    <div class="card tint"><div class="metric">4</div><div class="metric-label">Compose services</div><p class="small">Frontend, backend, PostgreSQL, Redis.</p></div>
+  </div>
+  <p><span class="badge implemented">IMPLEMENTED</span>A visitor sees the public landing page, chooses register or login, then reaches a dashboard route. Client pages call FastAPI over JSON HTTP. The backend checks a bearer JWT and active user in PostgreSQL before running protected feature logic. Some endpoints read stored profile data; profile sync calls external coding services; tutor and code review may call Gemini.</p>
+  <span class="ref">frontend/app/page.tsx:34–84 · frontend/app/login/page.tsx:13–30 · frontend/lib/api.ts:45–77 · backend/app/core/deps.py:18–45 · backend/app/api/v1/router.py:6–12</span>
+  <h3>Interview introduction, three lengths</h3>
+  <div class="card"><h4>20 seconds</h4><p>“AlgoMentor is a competitive-programming coach built with Next.js and FastAPI. It imports Codeforces and LeetCode profile data, turns it into topic analytics and study plans, and offers AI tutoring and code review. PostgreSQL stores learner data; JWTs protect the API.”</p></div>
+  <div class="card"><h4>45 seconds</h4><p>“I built AlgoMentor to help competitive programmers identify weak topics and plan practice. The Next.js client uses a typed API wrapper and TanStack Query. FastAPI routes delegate to services and SQLAlchemy repositories backed by PostgreSQL. Users sign in with bcrypt-hashed passwords and access/refresh JWTs. Profile sync pulls Codeforces and LeetCode data; analytics, recommendations, and rating predictions use the stored result. Gemini powers tutoring and code review when an API key is set.”</p></div>
+  <div class="card"><h4>90 seconds</h4><p>“The core user journey is register, sign in, link a coding profile, then inspect dashboard analytics and generate practice guidance. The frontend uses Next.js App Router with client components for interactive pages. A shared fetch client attaches an access JWT and refreshes it after a 401. FastAPI validates the token, loads the user, and invokes a service. Profile sync fetches Codeforces REST data plus LeetCode data through a third-party stats API and LeetCode GraphQL, normalizes submissions and topic tags, then replaces the profile's derived rows in PostgreSQL. Other services produce charts, rule-based roadmaps and recommendations, and request-time rating forecasts. The AI endpoints use Gemini if configured, with static fallback output otherwise. Redis currently tracks revoked refresh-token IDs; it does not cache dashboard data. I can also explain the limits: localStorage tokens, serial external calls during sync, synthetic LeetCode rating history, and development-focused Compose settings.”</p></div>
+</section>
+<section class="pagebreak">
+  <div class="eyebrow">02 / the map</div>
+  <h2>Simple interview architecture</h2>
+  <div class="diagram">
+    <svg viewBox="0 0 900 280" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Browser to Next.js to FastAPI, PostgreSQL, Redis and providers">
+      <defs><marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="#43829d"/></marker></defs>
+      <g font-family="Segoe UI,Arial" text-anchor="middle"><rect x="20" y="101" width="125" height="66" rx="12" fill="#dcebf2" stroke="#99bbcc"/><text x="82" y="130" font-size="15" font-weight="700" fill="#16384f">Browser</text><text x="82" y="149" font-size="11" fill="#52657a">learner</text>
+      <rect x="202" y="101" width="150" height="66" rx="12" fill="#dcebf2" stroke="#99bbcc"/><text x="277" y="130" font-size="15" font-weight="700" fill="#16384f">Next.js</text><text x="277" y="149" font-size="11" fill="#52657a">pages + API client</text>
+      <rect x="410" y="101" width="150" height="66" rx="12" fill="#cceae6" stroke="#79b8b0"/><text x="485" y="130" font-size="15" font-weight="700" fill="#16384f">FastAPI</text><text x="485" y="149" font-size="11" fill="#52657a">routes + services</text>
+      <rect x="665" y="23" width="170" height="55" rx="11" fill="#fff0d6" stroke="#d9b56a"/><text x="750" y="47" font-size="14" font-weight="700" fill="#16384f">External APIs</text><text x="750" y="64" font-size="10.5" fill="#52657a">CF · LC · Gemini</text>
+      <rect x="665" y="108" width="170" height="55" rx="11" fill="#e6e5f5" stroke="#aca8d8"/><text x="750" y="133" font-size="14" font-weight="700" fill="#16384f">PostgreSQL</text><text x="750" y="150" font-size="10.5" fill="#52657a">durable app data</text>
+      <rect x="665" y="193" width="170" height="55" rx="11" fill="#ffe9e4" stroke="#d7a59a"/><text x="750" y="218" font-size="14" font-weight="700" fill="#16384f">Redis</text><text x="750" y="235" font-size="10.5" fill="#52657a">refresh denylist</text></g>
+      <g fill="none" stroke="#43829d" stroke-width="2.5" marker-end="url(#arr)"><path d="M146 134 H195"/><path d="M353 134 H403"/><path d="M561 129 H654"/><path d="M560 117 C612 117 610 50 654 50"/><path d="M560 151 C612 151 610 220 654 220"/></g>
+      <g font-family="Segoe UI,Arial" font-size="10" fill="#476b7e"><text x="365" y="113">JSON + JWT</text><text x="574" y="99">feature calls</text></g>
+    </svg>
+    <p class="caption"><span class="badge implemented">IMPLEMENTED</span>Redis is used for refresh-token revocation, not a read-through data cache. Source: <code>backend/app/core/deps.py:52–60</code>.</p>
+  </div>
+  <div class="grid2">
+    <div class="card"><h3>One-line design rationale</h3><p><span class="badge inferred">INFERRED</span>The service and repository layers keep HTTP parsing, business logic, and database access separable, making feature code easier to test and change.</p><span class="ref">backend/app/api/v1/profiles.py:13–27 · backend/app/services/profile_service.py:13–24 · backend/app/repositories/profile_repository.py:22–36</span></div>
+    <div class="card"><h3>Accurate caveat</h3><p><span class="badge implemented">IMPLEMENTED</span>“AI-powered” is conditional. If <code>GEMINI_API_KEY</code> is absent, the Gemini client returns built-in fallback responses.</p><span class="ref">backend/app/external/gemini_client.py:9–23</span></div>
+  </div>
+  <h3>Detailed engineering diagram</h3>
+  <div class="diagram">
+    <svg viewBox="0 0 920 470" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Detailed architecture layers">
+      <defs><marker id="a2" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto"><path d="M0 0L7 3.5L0 7Z" fill="#4c8297"/></marker></defs>
+      <g font-family="Segoe UI,Arial" fill="#16384f"><text x="30" y="31" font-size="12" font-weight="700" fill="#0d8b83">BROWSER / NEXT.JS</text><text x="295" y="31" font-size="12" font-weight="700" fill="#0d8b83">FASTAPI BACKEND</text><text x="745" y="31" font-size="12" font-weight="700" fill="#0d8b83">STATE / PROVIDERS</text></g>
+      <g font-family="Segoe UI,Arial" text-anchor="middle" fill="#16384f">
+        <rect x="25" y="73" width="195" height="64" rx="10" fill="#e4f0f5" stroke="#accad7"/><text x="122" y="101" font-size="14" font-weight="700">App Router pages</text><text x="122" y="120" font-size="10.5">landing · auth · dashboard</text>
+        <rect x="25" y="170" width="195" height="64" rx="10" fill="#e4f0f5" stroke="#accad7"/><text x="122" y="198" font-size="14" font-weight="700">Client state</text><text x="122" y="217" font-size="10.5">TanStack Query · useState</text>
+        <rect x="25" y="267" width="195" height="64" rx="10" fill="#e4f0f5" stroke="#accad7"/><text x="122" y="295" font-size="14" font-weight="700">API wrapper</text><text x="122" y="314" font-size="10.5">fetch · bearer · refresh</text>
+        <rect x="300" y="73" width="180" height="64" rx="10" fill="#d7efeb" stroke="#95c6bf"/><text x="390" y="101" font-size="14" font-weight="700">FastAPI routers</text><text x="390" y="120" font-size="10.5">/api/v1 · Pydantic</text>
+        <rect x="520" y="73" width="175" height="64" rx="10" fill="#e9e5f5" stroke="#b8acd8"/><text x="607" y="101" font-size="14" font-weight="700">Auth dependency</text><text x="607" y="120" font-size="10.5">JWT · active user</text>
+        <rect x="300" y="190" width="180" height="64" rx="10" fill="#d7efeb" stroke="#95c6bf"/><text x="390" y="218" font-size="14" font-weight="700">Services</text><text x="390" y="237" font-size="10.5">sync · analytics · AI · ML</text>
+        <rect x="520" y="190" width="175" height="64" rx="10" fill="#d7efeb" stroke="#95c6bf"/><text x="607" y="218" font-size="14" font-weight="700">Repositories</text><text x="607" y="237" font-size="10.5">async SQLAlchemy</text>
+        <rect x="745" y="73" width="145" height="64" rx="10" fill="#f1ecff" stroke="#bcb0db"/><text x="817" y="101" font-size="14" font-weight="700">PostgreSQL</text><text x="817" y="120" font-size="10.5">11 tables</text>
+        <rect x="745" y="170" width="145" height="64" rx="10" fill="#ffece6" stroke="#dfb5a5"/><text x="817" y="198" font-size="14" font-weight="700">Redis</text><text x="817" y="217" font-size="10.5">revoked JTI</text>
+        <rect x="300" y="329" width="180" height="64" rx="10" fill="#fff1d9" stroke="#d9bf88"/><text x="390" y="357" font-size="14" font-weight="700">Gemini client</text><text x="390" y="376" font-size="10.5">optional provider</text>
+        <rect x="520" y="329" width="175" height="64" rx="10" fill="#fff1d9" stroke="#d9bf88"/><text x="607" y="357" font-size="14" font-weight="700">Platform clients</text><text x="607" y="376" font-size="10.5">httpx · public APIs</text>
+        <rect x="745" y="286" width="145" height="64" rx="10" fill="#fff8e9" stroke="#dec99c"/><text x="817" y="312" font-size="13" font-weight="700">CF · LC</text><text x="817" y="331" font-size="10.5">REST · GraphQL · stats</text>
+        <rect x="745" y="370" width="145" height="64" rx="10" fill="#fff8e9" stroke="#dec99c"/><text x="817" y="398" font-size="14" font-weight="700">Google Gemini</text><text x="817" y="417" font-size="10.5">model response</text>
+      </g>
+      <g fill="none" stroke="#4c8297" stroke-width="2" marker-end="url(#a2)"><path d="M122 138V163"/><path d="M122 235V260"/><path d="M220 299 H260 V105 H292"/><path d="M391 138V183"/><path d="M481 222 H512"/><path d="M696 222 H716 V106 H738"/><path d="M481 105 H512"/><path d="M696 105 H721 V202 H738"/><path d="M390 255V322"/><path d="M480 243 V303 H607 V322"/><path d="M696 360 H720 V318 H738"/><path d="M390 394 V445 H720 V405 H738"/></g>
+    </svg>
+    <p class="caption">Read left to right for a normal request, then down for external integrations. Auth is a dependency within the FastAPI process, not a separate deployed service.</p>
+  </div>
+</section>
+<section class="pagebreak">
+  <div class="eyebrow">03 / code map</div>
+  <h2>Folders worth remembering</h2>
+  <table><thead><tr><th>Directory</th><th>Purpose and connection</th><th>Interview anchor</th></tr></thead><tbody>
+    <tr><td><code>frontend/app</code></td><td><span class="badge implemented">IMPLEMENTED</span>App Router pages: public landing, register/login, and the <code>(dashboard)</code> route group. The dashboard layout checks local token presence.</td><td><code>app/(dashboard)/layout.tsx:8–15</code></td></tr>
+    <tr><td><code>frontend/lib</code></td><td><span class="badge implemented">IMPLEMENTED</span>Shared HTTP wrapper, token storage, automatic refresh and endpoint functions.</td><td><code>lib/api.ts:17–141</code></td></tr>
+    <tr><td><code>frontend/components</code></td><td><span class="badge implemented">IMPLEMENTED</span>Query provider, navigation, charts, and small UI primitives.</td><td><code>components/providers.tsx:6–16</code></td></tr>
+    <tr><td><code>backend/app/api/v1</code></td><td><span class="badge implemented">IMPLEMENTED</span>Route declaration, Pydantic request/response binding, auth dependency, service dispatch.</td><td><code>api/v1/router.py:6–12</code></td></tr>
+    <tr><td><code>backend/app/core</code></td><td><span class="badge implemented">IMPLEMENTED</span>Environment settings, JWT/password functions, bearer dependency, Redis client.</td><td><code>core/deps.py:18–60</code></td></tr>
+    <tr><td><code>backend/app/services</code></td><td><span class="badge implemented">IMPLEMENTED</span>Business rules for auth, profile ingestion, analytics, roadmaps, tutor, review, recommendations, predictions.</td><td><code>services/profile_service.py:13–128</code></td></tr>
+    <tr><td><code>backend/app/repositories</code></td><td><span class="badge implemented">IMPLEMENTED</span>SQLAlchemy query and mutation methods, called by services.</td><td><code>repositories/profile_repository.py:22–183</code></td></tr>
+    <tr><td><code>backend/app/models + schemas</code></td><td><span class="badge implemented">IMPLEMENTED</span>ORM tables versus API validation and serialization contracts.</td><td><code>models/user.py:13–197</code></td></tr>
+    <tr><td><code>backend/app/external</code></td><td><span class="badge implemented">IMPLEMENTED</span>Codeforces, LeetCode and Gemini adapters.</td><td><code>external/platform_clients.py:8–175</code></td></tr>
+    <tr><td><code>backend/alembic + seed</code></td><td><span class="badge implemented">IMPLEMENTED</span>Initial schema migration and demo/catalog seed invoked at Compose startup.</td><td><code>alembic/versions/001_initial_schema.py:19–190</code></td></tr>
+  </tbody></table>
+  <div class="callout"><strong>Five files to memorize:</strong> <code>frontend/lib/api.ts</code> → <code>backend/app/main.py</code> → <code>backend/app/core/deps.py</code> → <code>backend/app/services/profile_service.py</code> → <code>backend/app/models/user.py</code>. Together they explain client transport, API entry, authorization, core ingestion, and persistence.</div>
+</section>
+<section class="pagebreak">
+  <div class="eyebrow">04 / runtime behavior</div>
+  <h2>Frontend, state, and the user journey</h2>
+  <div class="flow"><div class="step">Public landing<br><code>/</code></div><div class="arrow">→</div><div class="step">Register or login</div><div class="arrow">→</div><div class="step">Token pair in browser</div><div class="arrow">→</div><div class="step">Dashboard + feature pages</div></div>
+  <p><span class="badge implemented">IMPLEMENTED</span><strong>Rendering and navigation.</strong> The landing page is an App Router page with links to login and registration. Interactive pages are client components. The root layout mounts <code>Providers</code>; the dashboard route group renders a sidebar and redirects to login after mount if no access token is present. This client check is a UX guard, not the authorization boundary.</p><span class="ref">frontend/app/page.tsx:1–110 · frontend/app/layout.tsx:13–21 · frontend/app/(dashboard)/layout.tsx:1–25</span>
+  <p><span class="badge implemented">IMPLEMENTED</span><strong>State.</strong> TanStack Query holds server-fetched data. Its default stale time is 60 seconds with one retry. Pages use <code>useQuery</code> for reads and <code>useMutation</code> for writes; profile sync invalidates the profile and dashboard queries. React <code>useState</code> holds form fields, tutor messages, selected session, and similar local UI state. Access and refresh tokens live in <code>localStorage</code>.</p><span class="ref">frontend/components/providers.tsx:6–16 · frontend/app/(dashboard)/profile/page.tsx:14–36 · frontend/app/(dashboard)/tutor/page.tsx:21–60 · frontend/lib/api.ts:17–34</span>
+  <p><span class="badge implemented">IMPLEMENTED</span><strong>Transport.</strong> <code>apiFetch</code> adds JSON headers and bearer auth, calls the browser-reachable <code>NEXT_PUBLIC_API_URL</code>, refreshes tokens after a 401 if an access token was sent, retries once, and throws the API's <code>detail</code> on remaining errors. Logout clears local tokens in a <code>finally</code> block even if the server call fails.</p><span class="ref">frontend/lib/api.ts:38–97 · frontend/components/layout/sidebar.tsx:34–42</span>
+  <div class="grid2"><div class="card"><h3>What happens after login?</h3><p><span class="badge implemented">IMPLEMENTED</span>The login page stores the returned token pair and navigates to <code>/dashboard</code>. The dashboard calls <code>GET /analytics/dashboard</code>. If no profile exists, the API returns 404 and the UI offers a link to profile setup.</p><span class="ref">frontend/app/login/page.tsx:20–29 · frontend/app/(dashboard)/dashboard/page.tsx:11–34 · backend/app/services/analytics_service.py:24–33</span></div><div class="card"><h3>What is not server state?</h3><p><span class="badge implemented">IMPLEMENTED</span>The tutor page keeps displayed chat messages in local component state, though session history is persisted in PostgreSQL. The API client does not use Next.js server actions or Next.js API routes.</p><span class="ref">frontend/app/(dashboard)/tutor/page.tsx:21–59 · backend/app/services/tutor_service.py:20–70 · frontend/lib/api.ts:45–77</span></div></div>
+</section>
+<section>
+  <div class="eyebrow">05 / request traces</div>
+  <h2>Two complete request lifecycles</h2>
+  <h3>A. Authenticated dashboard read</h3>
+  <ol>
+    <li><span class="badge implemented">IMPLEMENTED</span><code>DashboardPage</code> starts the <code>["dashboard"]</code> query, which calls <code>analyticsApi.dashboard()</code>.</li>
+    <li><span class="badge implemented">IMPLEMENTED</span><code>apiFetch</code> reads the access token from <code>localStorage</code>, attaches <code>Authorization: Bearer …</code>, and fetches <code>/api/v1/analytics/dashboard</code>.</li>
+    <li><span class="badge implemented">IMPLEMENTED</span>FastAPI's CORS middleware handles allowed browser origins. The route asks <code>get_current_user</code> to decode an access JWT and fetch an active user from PostgreSQL.</li>
+    <li><span class="badge implemented">IMPLEMENTED</span><code>AnalyticsService</code> loads the user's profile, submissions, rating history and topic scores, computes stats, chart points and heatmap cells, and returns a <code>DashboardResponse</code>.</li>
+    <li><span class="badge implemented">IMPLEMENTED</span>With no profile, the service raises 404. With an expired access token, the API returns 401 and <code>apiFetch</code> attempts token refresh before retrying.</li>
+  </ol><span class="ref">frontend/app/(dashboard)/dashboard/page.tsx:11–47 · frontend/lib/api.ts:45–77 · backend/app/main.py:23–30 · backend/app/api/v1/analytics.py:13–18 · backend/app/core/deps.py:18–45 · backend/app/services/analytics_service.py:23–76</span>
+  <div class="callout warn"><span class="badge implemented">IMPLEMENTED</span>This is a PostgreSQL-backed read. Redis is not consulted on dashboard requests. The previous browser → Redis → PostgreSQL cache-miss diagram describes a possible enhancement, not present behavior.</div>
+  <h3>B. Profile sync write</h3>
+  <ol>
+    <li><span class="badge implemented">IMPLEMENTED</span>The profile form sends <code>POST /profiles/sync</code> with one or both handles; the route requires an authenticated user.</li>
+    <li><span class="badge implemented">IMPLEMENTED</span><code>ProfileService.link_and_sync</code> validates that at least one handle is provided, loads or creates the one-to-one profile, and calls configured platform clients.</li>
+    <li><span class="badge implemented">IMPLEMENTED</span>Codeforces calls <code>user.info</code>, <code>user.rating</code>, and <code>user.status</code> in sequence, keeping up to 500 submissions. LeetCode calls the third-party <code>leetcode-stats-api.herokuapp.com</code> and then LeetCode GraphQL.</li>
+    <li><span class="badge implemented">IMPLEMENTED</span>The service normalizes tags, builds ratings and submission objects, computes topic scores, deletes prior child rows, adds the new rows, and returns profile + scores. The DB dependency commits after successful handling and rolls back on exception.</li>
+    <li><span class="badge implemented">IMPLEMENTED</span>The frontend invalidates profile and dashboard queries so the next read sees the updated data.</li>
+  </ol><span class="ref">frontend/app/(dashboard)/profile/page.tsx:18–37 · backend/app/api/v1/profiles.py:21–27 · backend/app/services/profile_service.py:25–128 · backend/app/external/platform_clients.py:8–175 · backend/app/db/session.py:9–16</span>
+  <div class="callout risk"><span class="badge implemented">IMPLEMENTED</span>The LeetCode adapter constructs a synthetic rating series in <code>build_synthetic_rating_history</code>; this is not real contest history. Also, when both platforms are linked, <code>total_solved</code> is set from LeetCode statistics rather than a combined unique count. Explain this honestly if asked about data quality.<span class="ref">backend/app/external/platform_clients.py:157–175 · backend/app/services/profile_service.py:47–70</span></div>
+</section>
+<section class="pagebreak">
+  <div class="eyebrow">06 / identity boundary</div>
+  <h2>Authentication and authorization</h2>
+  <div class="grid2"><div class="card tint"><h3>Registration + login</h3><p><span class="badge implemented">IMPLEMENTED</span>Registration validates email/username/password with Pydantic, checks uniqueness, hashes the password using passlib/bcrypt, and inserts the user. Login verifies the hash and active flag, signs JWTs with HS256 by default, and stores the refresh <code>jti</code> in PostgreSQL.</p><span class="ref">backend/app/schemas/auth.py:7–18 · backend/app/services/auth_service.py:26–54 · backend/app/core/security.py:10–35</span></div><div class="card tint"><h3>Protected endpoints</h3><p><span class="badge implemented">IMPLEMENTED</span><code>get_current_user</code> requires a Bearer token, decodes it, checks <code>type=access</code>, and loads an active user. Each feature route declares this dependency. No roles or permissions beyond “active authenticated user” are modeled.</p><span class="ref">backend/app/core/deps.py:18–45 · backend/app/api/v1/*.py</span></div></div>
+  <h3>Token lifecycle in one picture</h3>
+  <div class="flow"><div class="step">Login<br>password verified</div><div class="arrow">→</div><div class="step">Access JWT<br>30 min default</div><div class="arrow">+</div><div class="step">Refresh JWT<br>7 days default</div><div class="arrow">→</div><div class="step">Rotate on 401<br>old JTI revoked</div></div>
+  <p><span class="badge implemented">IMPLEMENTED</span>Refresh validates JWT type, Redis denylist status, stored token expiry/revocation, and active user; it revokes and blacklists the old token before creating a new pair. Logout revokes the supplied refresh token and blacklists its <code>jti</code>. The Redis TTL is hard-coded to seven days, and the stored refresh expiry is also hard-coded to seven days even though JWT expiry reads <code>REFRESH_TOKEN_EXPIRE_DAYS</code>; changing that setting can make them disagree.</p><span class="ref">backend/app/services/auth_service.py:55–100 · backend/app/core/security.py:28–35 · backend/app/core/deps.py:52–60 · backend/app/core/config.py:10–14</span>
+  <p><span class="badge implemented">IMPLEMENTED</span>The frontend stores both tokens in <code>localStorage</code>. A dashboard layout redirect checks only token presence after render. Server authorization relies on <code>get_current_user</code>; no custom Next.js middleware or role-based access control is present. Access tokens are not checked against the Redis denylist, so logout does not immediately invalidate an already issued access token.</p><span class="ref">frontend/lib/api.ts:17–34 · frontend/app/(dashboard)/layout.tsx:8–15 · backend/app/core/deps.py:18–45</span>
+  <div class="callout warn"><strong>Interview distinction:</strong> Authentication asks “who is this user?”; authorization asks “may they access this resource?” Here, the general rule is active authenticated user, while tutor session lookup also scopes by <code>ChatSession.user_id == user.id</code> and feature queries filter by the current user.<span class="ref">backend/app/repositories/profile_repository.py:111–126 · backend/app/services/tutor_service.py:28–39</span></div>
+</section>
+<section>
+  <div class="eyebrow">07 / persistence</div>
+  <h2>Database architecture</h2>
+  <p><span class="badge implemented">IMPLEMENTED</span>PostgreSQL is the durable system of record. SQLAlchemy async sessions are created per request through <code>get_db</code>; Alembic has one initial migration. UUID primary keys identify most rows, foreign keys connect users to profiles, tokens, roadmaps, chats and reviews, and a unique <code>competitive_profiles.user_id</code> enforces one profile per user.</p><span class="ref">backend/app/db/session.py:5–16 · backend/app/models/user.py:13–197 · backend/alembic/versions/001_initial_schema.py:19–190</span>
+  <table><thead><tr><th>Area</th><th>Tables and relationships</th><th>Why it exists</th></tr></thead><tbody>
+    <tr><td>Identity</td><td><code>users</code> 1:N <code>refresh_tokens</code></td><td>Accounts and tracked refresh JTIs</td></tr>
+    <tr><td>Profile</td><td><code>users</code> 1:1 <code>competitive_profiles</code></td><td>Linked handles and aggregate metrics</td></tr>
+    <tr><td>History</td><td><code>competitive_profiles</code> 1:N <code>rating_history</code>, <code>submissions</code>, <code>topic_scores</code></td><td>Analytics and weakness calculations</td></tr>
+    <tr><td>Learning</td><td><code>users</code> 1:N <code>roadmaps</code>, <code>chat_sessions</code>, <code>code_reviews</code>; <code>chat_sessions</code> 1:N <code>chat_messages</code></td><td>Saved plans, conversations, analyses</td></tr>
+    <tr><td>Catalog</td><td><code>problem_catalog</code></td><td>Seeded recommendation candidates</td></tr>
+  </tbody></table>
+  <p><span class="badge implemented">IMPLEMENTED</span>JSONB stores flexible raw profile metadata, topic lists, roadmap plans, chat metadata, review analysis, and catalog tags. Email and username have unique indexes; refresh <code>jti</code> is unique and indexed; profile child foreign keys are indexed in the ORM model. Profile sync deletes and reinserts child rows rather than upserting individual submissions.</p><span class="ref">backend/app/models/user.py:16–197 · backend/app/repositories/profile_repository.py:38–57 · backend/app/services/profile_service.py:77–118</span>
+  <p><span class="badge recommended">RECOMMENDED</span>For larger histories, add uniqueness constraints for platform/problem/contest identities, batch upserts, and indexes that match frequent user/time filters. Consider a durable sync job with an explicit status table instead of keeping external HTTP calls inside a request-scoped database session.</p>
+</section>
+<section class="pagebreak">
+  <div class="eyebrow">08 / HTTP surface</div>
+  <h2>Important APIs: what to say and what to watch</h2>
+  <p class="small">All paths below are relative to <code>/api/v1</code> unless noted. Every row describes implemented code. Feature routes use <code>get_current_user</code>; auth endpoints are public.</p>
+  <table><thead><tr><th>Method + path</th><th>Operation / response</th><th>Important behavior</th><th>Source</th></tr></thead><tbody>
+    <tr><td><code>POST /auth/register</code></td><td>Create user; 201 user</td><td>bcrypt hash; duplicate email/username → 400</td><td><code>auth.py:13–16</code></td></tr>
+    <tr><td><code>POST /auth/login</code></td><td>Issue access + refresh pair</td><td>bad password → 401; inactive → 403</td><td><code>auth.py:18–20</code></td></tr>
+    <tr><td><code>POST /auth/refresh</code></td><td>Rotate refresh pair</td><td>Redis denylist + DB row + active user checks</td><td><code>auth.py:23–25</code></td></tr>
+    <tr><td><code>POST /auth/logout</code></td><td>Revoke refresh; 204</td><td>access token remains valid until expiry</td><td><code>auth.py:28–30</code></td></tr>
+    <tr><td><code>GET /profiles/me</code></td><td>Current linked profile or null</td><td>read by authenticated user ID</td><td><code>profiles.py:13–19</code></td></tr>
+    <tr><td><code>POST /profiles/sync</code></td><td>Import profile + topic scores</td><td>external HTTP + replace child rows</td><td><code>profiles.py:21–27</code></td></tr>
+    <tr><td><code>GET /analytics/dashboard</code></td><td>Stats, charts, heatmap</td><td>404 until profile exists</td><td><code>analytics.py:13–18</code></td></tr>
+    <tr><td><code>POST /roadmaps/generate</code><br><code>GET /roadmaps</code></td><td>Create/list study plans</td><td>rule-generated from weak topics; duration 4–12 weeks</td><td><code>roadmaps.py:15–29</code></td></tr>
+    <tr><td><code>POST /tutor/sessions</code><br><code>GET /tutor/sessions</code><br><code>GET /tutor/sessions/{id}</code><br><code>POST /tutor/sessions/{id}/messages</code></td><td>Persist chat sessions and send message</td><td>session lookup scoped to current user; Gemini or fallback</td><td><code>tutor.py:15–48</code></td></tr>
+    <tr><td><code>POST /code-review</code><br><code>GET /code-review/history</code></td><td>Analyze code and list history</td><td>stores source code and analysis JSONB</td><td><code>code_review.py:13–27</code></td></tr>
+    <tr><td><code>GET /predictions/ratings</code></td><td>Next contest, 3/6-month estimates</td><td>per-request Ridge fit with enough history; heuristic otherwise</td><td><code>predictions.py:14–20</code></td></tr>
+    <tr><td><code>GET /predictions/interview-readiness</code></td><td>Four company-labelled scores</td><td>hard-coded weighted formula, not recruiter data</td><td><code>predictions.py:22–28</code></td></tr>
+    <tr><td><code>GET /predictions/recommendations</code></td><td>Easy/medium/hard problem lists</td><td>scores catalog by topic overlap and rating fit</td><td><code>predictions.py:30–35</code></td></tr>
+    <tr><td><code>GET /health</code></td><td>Static healthy response</td><td>does not probe PostgreSQL or Redis</td><td><code>main.py:33–37</code></td></tr>
+  </tbody></table>
+  <div class="callout"><span class="badge implemented">IMPLEMENTED</span>“Rating prediction” combines a request-time Ridge regression with fallback heuristics. “Interview readiness” is a deterministic weighted score. “Success probability” in recommendations is a hand-built score. Do not describe any of these as validated predictive models.<span class="ref">backend/app/services/prediction_service.py:14–114 · backend/app/services/recommendation_service.py:25–81</span></div>
+</section>
+<section class="pagebreak">
+  <div class="eyebrow">09 / boundaries and failures</div>
+  <h2>External services, middleware, errors</h2>
+  <table><thead><tr><th>Dependency</th><th>Actual call path</th><th>Failure or fallback</th></tr></thead><tbody>
+    <tr><td>Codeforces</td><td><span class="badge implemented">IMPLEMENTED</span>Three public REST calls: <code>user.info</code>, <code>user.rating</code>, <code>user.status</code>, each via <code>httpx</code> with 30s timeout.</td><td>HTTP errors propagate; a non-OK <code>user.info</code> response raises <code>ValueError</code>. No retry or circuit breaker.</td></tr>
+    <tr><td>LeetCode</td><td><span class="badge implemented">IMPLEMENTED</span>GET to <code>leetcode-stats-api.herokuapp.com/{username}</code>, then POST to <code>leetcode.com/graphql</code>.</td><td>Stats 404 raises <code>ValueError</code>; other stats HTTP errors propagate. A non-200 GraphQL response is treated as empty data.</td></tr>
+    <tr><td>Google Gemini</td><td><span class="badge implemented">IMPLEMENTED</span><code>gemini-1.5-flash</code> via <code>google-generativeai</code>; tutor and code review call the adapter.</td><td>If no key, returns static fallback JSON. Runtime provider exceptions are not caught by the adapter.</td></tr>
+    <tr><td>Redis</td><td><span class="badge implemented">IMPLEMENTED</span><code>blacklist:refresh:{jti}</code> with <code>setex</code>/<code>exists</code> during refresh and logout.</td><td>No application-data cache. Redis errors are not handled in these functions.</td></tr>
+  </tbody></table>
+  <span class="ref">backend/app/external/platform_clients.py:8–31,77–115 · backend/app/external/gemini_client.py:9–23 · backend/app/core/deps.py:52–60</span>
+  <h3>Middleware and error taxonomy</h3>
+  <p><span class="badge implemented">IMPLEMENTED</span><code>CORSMiddleware</code> is the only middleware explicitly registered by the app; it allows configured origins, all methods/headers and credentials. Authentication is a FastAPI dependency, not middleware. No custom exception handler or Next.js middleware file appears in the source tree.</p><span class="ref">backend/app/main.py:18–31 · backend/app/core/config.py:17–23 · backend/app/core/deps.py:18–45</span>
+  <div class="grid2"><div class="card"><h3>Handled business errors</h3><p><span class="badge implemented">IMPLEMENTED</span>Auth raises 400/401/403 for duplicates, invalid credentials/tokens and disabled accounts; profile, roadmap and recommendation services raise 400 or 404 for missing inputs/profile; Pydantic/FastAPI handles schema validation with 422.</p><span class="ref">backend/app/services/auth_service.py:26–88 · backend/app/services/profile_service.py:25–32 · backend/app/services/roadmap_service.py:27–30 · backend/app/schemas/*.py</span></div><div class="card"><h3>Unnormalized failures</h3><p><span class="badge inferred">INFERRED</span>Raw <code>httpx</code>, provider, Redis or parsing errors are likely surfaced as server errors because no route-level mapping or global handler is defined. Client <code>apiFetch</code> falls back to “Request failed” if an error body is not JSON.</p><span class="ref">backend/app/external/platform_clients.py:11–30,81–108 · backend/app/main.py:1–37 · frontend/lib/api.ts:70–74</span></div></div>
+  <div class="callout warn"><span class="badge implemented">IMPLEMENTED</span>The <code>/health</code> endpoint returns a fixed payload and does not prove the database, Redis, or Gemini are available. Compose has container health checks only for PostgreSQL and Redis.<span class="ref">backend/app/main.py:33–37 · docker-compose.yml:11–30</span></div>
+</section>
+<section class="pagebreak">
+  <div class="eyebrow">10 / security review</div>
+  <h2>Security: what is true today</h2>
+  <table><thead><tr><th>Topic</th><th>Current implementation</th><th>Interview-ready assessment</th></tr></thead><tbody>
+    <tr><td>Password storage</td><td><span class="badge implemented">IMPLEMENTED</span>passlib/bcrypt hash, never plain password in user table.</td><td>Good baseline; add login rate limiting and password policy if exposed.</td></tr>
+    <tr><td>JWT validation</td><td><span class="badge implemented">IMPLEMENTED</span>Signed HS256 token, expiry and type checked; active user fetched on protected requests.</td><td>Short access lifetime reduces—but does not remove—post-logout exposure.</td></tr>
+    <tr><td>Refresh rotation</td><td><span class="badge implemented">IMPLEMENTED</span>Old row revoked, JTI denylisted in Redis, new row written.</td><td>Concurrent refreshes can race because the check and revoke are not an atomic compare-and-swap.</td></tr>
+    <tr><td>Browser token storage</td><td><span class="badge implemented">IMPLEMENTED</span>Access and refresh tokens in <code>localStorage</code>.</td><td>JavaScript-readable storage increases impact of an XSS bug. Consider secure HttpOnly cookies with CSRF defenses.</td></tr>
+    <tr><td>Secrets and demo data</td><td><span class="badge implemented">IMPLEMENTED</span>Example JWT secret/password, Compose defaults and a known seeded demo credential.</td><td>Replace values and remove public demo seeding before a real deployment.</td></tr>
+    <tr><td>Resource ownership</td><td><span class="badge implemented">IMPLEMENTED</span>Tutor session queries include the current user ID; profile/recommendation data is fetched by user ID.</td><td>Useful object-level authorization pattern. Keep testing ownership on every new resource endpoint.</td></tr>
+  </tbody></table>
+  <span class="ref">backend/app/core/security.py:10–41 · backend/app/services/auth_service.py:55–100 · frontend/lib/api.ts:17–34 · .env.example:1–23 · backend/app/seed/run.py:36–53 · backend/app/repositories/profile_repository.py:111–126</span>
+  <h3>Three specific findings to volunteer if asked</h3>
+  <ol>
+    <li><span class="badge implemented">IMPLEMENTED</span>Refresh JWT expiry uses <code>REFRESH_TOKEN_EXPIRE_DAYS</code>, but database expiry and Redis TTL are fixed at seven days. If configuration changes, the three authorities can disagree. <span class="ref">backend/app/core/security.py:28–35 · backend/app/services/auth_service.py:71–100</span></li>
+    <li><span class="badge inferred">INFERRED</span>Two near-simultaneous refresh calls can both read the same not-yet-revoked row before either commit, allowing duplicate replacement tokens. The code has no row lock or atomic conditional update. <span class="ref">backend/app/services/auth_service.py:67–81 · backend/app/repositories/profile_repository.py:64–76 · backend/app/db/session.py:9–16</span></li>
+    <li><span class="badge implemented">IMPLEMENTED</span>There is no server-side access-token revocation path. The bearer dependency does not query Redis, and logout only revokes refresh tokens. <span class="ref">backend/app/core/deps.py:18–45 · backend/app/services/auth_service.py:83–95</span></li>
+  </ol>
+  <div class="callout risk"><span class="badge recommended">RECOMMENDED</span>Production hardening order: rotate secrets and disable demo seeding; move refresh token to a secure cookie with a clear CSRF design; add login throttling; make refresh rotation atomic; centralize provider error mapping, timeouts, and observability. The current repository does not implement these controls.</div>
+</section>
+<section>
+  <div class="eyebrow">11 / deployment and growth</div>
+  <h2>Deployment architecture, scaling, bottlenecks</h2>
+  <p><span class="badge implemented">IMPLEMENTED</span>Compose defines four containers and named volumes for PostgreSQL and Redis. Backend startup runs Alembic migration, the seed script, then <code>uvicorn --reload</code>. Frontend runs <code>npm run dev</code>. Both source trees are bind-mounted, and ports 3000, 8000, 5432 and 6379 are published. This is a local-development deployment, not evidence of a production release.</p><span class="ref">docker-compose.yml:1–78 · frontend/Dockerfile:1–11 · backend/Dockerfile:1–14</span>
+  <p><span class="badge implemented">IMPLEMENTED</span><code>next.config.ts</code> sets <code>output: "standalone"</code>, but the Docker command still runs the development server. The backend exposes an API docs page through FastAPI by default; no load balancer, queue, Kubernetes manifest, CI/CD pipeline, or production infrastructure is present in the inspected repository.</p><span class="ref">frontend/next.config.ts:1–7 · docker-compose.yml:34–71 · backend/app/main.py:18–37</span>
+  <div class="callout"><span class="badge implemented">IMPLEMENTED</span><strong>Configuration to know:</strong> <code>DATABASE_URL</code> and <code>REDIS_URL</code> select storage; <code>JWT_SECRET_KEY</code> signs tokens; <code>GEMINI_API_KEY</code> enables live AI; <code>BACKEND_CORS_ORIGINS</code> controls browser origins; <code>NEXT_PUBLIC_API_URL</code> is the browser-visible API base, not a secret. Compose overrides the backend database and Redis URLs with container hostnames. Codeforces and LeetCode calls do not use API keys in this code.<span class="ref">.env.example:1–23 · backend/app/core/config.py:5–23 · docker-compose.yml:37–42 · frontend/lib/api.ts:1</span></div>
+  <table><thead><tr><th>Bottleneck / limit</th><th>Code evidence</th><th>Practical next step</th></tr></thead><tbody>
+    <tr><td><span class="badge implemented">IMPLEMENTED</span>Profile sync waits on serial external requests inside an API call.</td><td><code>platform_clients.py:11–30,81–108</code>; <code>profile_service.py:38–65</code></td><td><span class="badge recommended">RECOMMENDED</span>Background sync jobs, concurrency where safe, retries with backoff, status endpoint.</td></tr>
+    <tr><td><span class="badge implemented">IMPLEMENTED</span>Large syncs delete/recreate all child rows; Codeforces handles up to 500 recent submissions.</td><td><code>platform_clients.py:26–31</code>; <code>profile_service.py:77–118</code></td><td><span class="badge recommended">RECOMMENDED</span>Incremental imports and dedupe keys.</td></tr>
+    <tr><td><span class="badge implemented">IMPLEMENTED</span>Every protected request loads the user from PostgreSQL.</td><td><code>core/deps.py:35–45</code></td><td><span class="badge recommended">RECOMMENDED</span>Profile DB traffic before optimizing; optional short-lived identity cache with invalidation.</td></tr>
+    <tr><td><span class="badge implemented">IMPLEMENTED</span>Recommendations load all catalog rows and sort in Python.</td><td><code>repositories/profile_repository.py:171–183</code>; <code>recommendation_service.py:31–81</code></td><td><span class="badge recommended">RECOMMENDED</span>Index/filter/paginate when catalog grows.</td></tr>
+    <tr><td><span class="badge implemented">IMPLEMENTED</span>Ridge regression is fitted per prediction request when history is long enough.</td><td><code>prediction_service.py:14–59</code></td><td><span class="badge recommended">RECOMMENDED</span>Train/evaluate offline or cache model outputs; show uncertainty honestly.</td></tr>
+    <tr><td><span class="badge implemented">IMPLEMENTED</span>Gemini model calls are awaited during tutor/review requests.</td><td><code>external/gemini_client.py:17–23</code>; <code>tutor_service.py:44–45</code></td><td><span class="badge recommended">RECOMMENDED</span>Provider timeout, budget limits, queue or streaming, structured output validation.</td></tr>
+  </tbody></table>
+  <div class="callout"><span class="badge recommended">RECOMMENDED</span><strong>Scaling story to tell:</strong> move to production images and managed PostgreSQL/Redis; isolate long profile-sync and AI tasks in workers; add status/polling; use connection pools, targeted indexes, backpressure and metrics; consider response caching only after measuring dashboard read load and defining invalidation on sync. None of these are deployed here.</div>
+</section>
+<section class="pagebreak">
+  <div class="eyebrow">12 / interview drill</div>
+  <h2>Questions, strong answers, deeper follow-ups</h2>
+  <div class="qa"><div class="q">1. Why Next.js plus FastAPI?</div><p class="a"><span class="badge inferred">INFERRED</span>“Next.js gives me route-based UI composition and client-side interaction; FastAPI hosts the Python services for data ingestion, analytics and AI. The boundary is JSON REST, so each side can evolve independently.”</p><div class="follow">Follow-up: What costs come with two runtimes? → Two deployables, CORS, shared API contracts and cross-origin token handling. <code>frontend/lib/api.ts:1–77</code>; <code>backend/app/main.py:18–31</code>.</div></div>
+  <div class="qa"><div class="q">2. Trace login end to end.</div><p class="a"><span class="badge implemented">IMPLEMENTED</span>“The form calls <code>/auth/login</code>. The service gets the user by email, verifies bcrypt hash and active status, signs access/refresh JWTs, persists refresh JTI, then returns the pair. The browser stores both and sends the access token on later requests.”</p><div class="follow">Follow-up: What happens after access expiry? → 401 triggers one refresh and retry. <code>auth_service.py:42–54,96–100</code>; <code>frontend/lib/api.ts:38–77</code>.</div></div>
+  <div class="qa"><div class="q">3. Is the dashboard cached in Redis?</div><p class="a"><span class="badge implemented">IMPLEMENTED</span>“No. Redis only stores refresh-token denylist entries. Dashboard analytics reads PostgreSQL via repositories and computes the response.”</p><div class="follow">Follow-up: When would you cache it? → Measure repeated reads, choose a short TTL, and invalidate on profile sync. <code>core/deps.py:52–60</code>; <code>analytics_service.py:23–76</code>.</div></div>
+  <div class="qa"><div class="q">4. How do you prevent users reading other users’ tutor sessions?</div><p class="a"><span class="badge implemented">IMPLEMENTED</span>“The bearer dependency establishes the active user, and <code>ChatRepository.get_session</code> filters by both session ID and that user's ID.”</p><div class="follow">Follow-up: Does every endpoint have ownership checks? → Review each new resource query; general authentication alone is not enough. <code>profile_repository.py:111–126</code>.</div></div>
+  <div class="qa"><div class="q">5. How does profile data become a roadmap?</div><p class="a"><span class="badge implemented">IMPLEMENTED</span>“Sync normalizes accepted submissions and tags into topic scores. The roadmap service selects the weakest topics, cycles them across requested weeks, combines a rating gap and curated resources, then saves the plan JSON.”</p><div class="follow">Follow-up: Is the roadmap AI-generated? → No; it is deterministic service logic. <code>topic_analysis_service.py:4–44</code>; <code>roadmap_service.py:27–86</code>.</div></div>
+  <div class="qa"><div class="q">6. What exactly does the ML model predict?</div><p class="a"><span class="badge implemented">IMPLEMENTED</span>“With at least three rating-history points, it fits a Ridge model in that request to predict rating delta; otherwise it uses a heuristic. The 3- and 6-month values extrapolate that delta. These are illustrative estimates, not validated forecasts.”</p><div class="follow">Follow-up: How would you validate it? → Historical train/test splits by user and time, MAE/calibration against baselines. <code>prediction_service.py:14–59,104–114</code>.</div></div>
+  <div class="qa"><div class="q">7. How is a refresh token revoked?</div><p class="a"><span class="badge implemented">IMPLEMENTED</span>“The service marks its PostgreSQL row revoked and writes the JTI to a Redis denylist. Refresh checks both before issuing a new pair.”</p><div class="follow">Follow-up: Is rotation race-safe? → Not fully; an atomic conditional update or row lock would help. <code>auth_service.py:55–100</code>.</div></div>
+  <div class="qa"><div class="q">8. What happens when Gemini is unavailable?</div><p class="a"><span class="badge implemented">IMPLEMENTED</span>“With no configured key, the adapter returns static fallback JSON. If a configured provider call fails at runtime, there is no explicit exception mapping in that adapter.”</p><div class="follow">Follow-up: How to improve? → Set timeout/retry budget, distinguish unavailable from fallback, validate structured output. <code>gemini_client.py:9–23,25–68</code>.</div></div>
+  <div class="qa"><div class="q">9. What is the most expensive request?</div><p class="a"><span class="badge inferred">INFERRED</span>“Profile sync is a likely hotspot because it waits for multiple external HTTP calls, parses submissions, deletes old rows and reinserts data before responding. I would measure latency and move it to a job if it dominates.”</p><div class="follow">Follow-up: What if a provider fails mid-sync? → The DB session rolls back, but external latency and errors still affect the request. <code>profile_service.py:25–128</code>; <code>db/session.py:9–16</code>.</div></div>
+  <div class="qa"><div class="q">10. What is the most important security change?</div><p class="a"><span class="badge recommended">RECOMMENDED</span>“First rotate the example credentials and disable public demo seeding. Then address JavaScript-readable refresh tokens, login throttling and atomic refresh rotation.”</p><div class="follow">Follow-up: Why not simply put all tokens in cookies? → Cookie transport needs SameSite, Secure, HttpOnly and a CSRF design. <code>.env.example:1–23</code>; <code>frontend/lib/api.ts:17–34</code>.</div></div>
+  <div class="qa"><div class="q">11. What if Redis goes down?</div><p class="a"><span class="badge inferred">INFERRED</span>“Normal access-token-protected feature requests still validate JWT and load the user from PostgreSQL. Refresh/logout would likely fail because they call Redis without a fallback.”</p><div class="follow">Follow-up: Should refresh fail open? → I would fail closed for revocation checks and return a controlled 503. <code>core/deps.py:52–60</code>; <code>core/deps.py:18–45</code>.</div></div>
+  <div class="qa"><div class="q">12. How does deployment work today?</div><p class="a"><span class="badge implemented">IMPLEMENTED</span>“Docker Compose starts PostgreSQL and Redis, then the backend runs migrations and seed before Uvicorn, and Next.js serves the frontend. The commands are development settings, including reload and the dev server.”</p><div class="follow">Follow-up: Production path? → Build immutable images, remove bind mounts/reload/seed, put services behind TLS and managed stateful infrastructure. <code>docker-compose.yml:1–78</code>.</div></div>
+  <div class="qa"><div class="q">13. How do you handle errors across layers?</div><p class="a"><span class="badge implemented">IMPLEMENTED</span>“Services raise FastAPI HTTP errors for known business cases; Pydantic validates request bodies; the browser wrapper parses an error <code>detail</code> or a generic fallback. Provider and infrastructure exceptions are not centrally normalized yet.”</p><div class="follow">Follow-up: What would you add? → Typed error contract, exception handlers, correlation IDs and logs. <code>auth_service.py:26–88</code>; <code>frontend/lib/api.ts:70–74</code>.</div></div>
+  <div class="qa"><div class="q">14. What data is synthetic or heuristic?</div><p class="a"><span class="badge implemented">IMPLEMENTED</span>“LeetCode rating-history points are generated from the current rating; recommendation ‘success probability’ is a formula; interview readiness is a weighted score. I would label these estimates clearly in the product and avoid calling them calibrated probabilities.”</p><div class="follow">Follow-up: What real data would improve them? → Historical attempts, contest outcomes and validated labels. <code>platform_clients.py:157–175</code>; <code>recommendation_service.py:36–81</code>; <code>prediction_service.py:61–101</code>.</div></div>
+</section>
+<section>
+  <div class="eyebrow">13 / design answer</div>
+  <h2>If asked, “What would you improve next?”</h2>
+  <div class="grid2">
+    <div class="card"><h3>1. Correctness and trust</h3><p><span class="badge recommended">RECOMMENDED</span>Mark synthetic LeetCode history as illustrative or remove it from real charts; fix combined solved counts; add contract tests for platform parsers and response schemas; avoid presenting heuristic scores as calibrated probabilities.</p></div>
+    <div class="card"><h3>2. Reliability</h3><p><span class="badge recommended">RECOMMENDED</span>Move profile sync to a durable job, show progress and failure states, add provider timeouts/retries, preserve the last good profile during an upstream outage, and map failures to useful API errors.</p></div>
+    <div class="card"><h3>3. Security</h3><p><span class="badge recommended">RECOMMENDED</span>Use deployment secrets, disable demo account seeding, add login throttling, make token rotation atomic, and plan a secure cookie-based refresh flow with CSRF controls.</p></div>
+    <div class="card"><h3>4. Production operations</h3><p><span class="badge recommended">RECOMMENDED</span>Build production images, remove <code>--reload</code> and source bind mounts, add test/CI gates, structured logs and metrics, dependency health probes, database backups, and migration rollout discipline.</p></div>
+  </div>
+  <h3>30-second improvement answer</h3>
+  <div class="callout">“I would first fix trust and reliability. Some LeetCode history is synthetic, and profile sync blocks on several external calls, so I would label the data accurately, add parser tests, and move sync into a durable job with a status endpoint. Then I would harden auth by rotating example secrets, removing public demo seeding, and making refresh rotation atomic. Once the behavior is measured, I would scale specific hotspots rather than add caching everywhere.”</div>
+  <p class="footer">Scope note: This guide is a static source audit of the local workspace. The directory has no Git metadata, so it cannot cite a pinned commit. There were no first-party test files or CI workflows in the inspected tree. The guide does not claim a successful runtime integration test or production deployment.</p>
+</section>
+</main>
+</body>
+</html>
