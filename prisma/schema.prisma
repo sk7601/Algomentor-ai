@@ -1,0 +1,290 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  password      String?
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts           Account[]
+  sessions           Session[]
+  profile            Profile?
+  contestHistories   ContestHistory[]
+  submissions        Submission[]
+  topicStats         TopicStats[]
+  roadmaps           Roadmap[]
+  recommendations    Recommendation[]
+  codeReviews        CodeReview[]
+  predictions        Prediction[]
+  progressReports    ProgressReport[]
+  analyticsSnapshots AnalyticsSnapshot[]
+  learningMetrics    LearningMetrics[]
+  chatSessions       ChatSession[]
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Profile {
+  id                String   @id @default(cuid())
+  userId            String   @unique
+  codeforcesHandle  String?
+  leetcodeUsername  String?
+  currentRating     Int      @default(0)
+  peakRating        Int      @default(0)
+  contestsParticipated Int   @default(0)
+  problemsSolved    Int      @default(0)
+  accuracy          Float    @default(0)
+  bio               String?
+  targetRating      Int      @default(1600)
+  theme             String   @default("dark")
+  geminiApiKey      String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model ContestHistory {
+  id           String   @id @default(cuid())
+  userId       String
+  platform     String
+  contestId    String
+  contestName  String
+  rank         Int?
+  ratingBefore Int?
+  ratingAfter  Int?
+  ratingChange Int?
+  problemsSolved Int    @default(0)
+  contestDate  DateTime
+  createdAt    DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, contestDate])
+  @@unique([userId, platform, contestId])
+}
+
+model Submission {
+  id           String   @id @default(cuid())
+  userId       String
+  platform     String
+  problemId    String
+  problemName  String
+  problemRating Int?
+  tags         String[]
+  verdict      String
+  language     String?
+  submittedAt  DateTime
+  createdAt    DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, submittedAt])
+  @@unique([userId, platform, problemId, submittedAt])
+}
+
+model TopicStats {
+  id              String   @id @default(cuid())
+  userId          String
+  topic           String
+  strengthScore   Float    @default(0)
+  weaknessScore   Float    @default(0)
+  acceptanceRate  Float    @default(0)
+  problemsSolved  Int      @default(0)
+  problemsAttempted Int    @default(0)
+  trend           Float    @default(0)
+  updatedAt       DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, topic])
+  @@index([userId])
+}
+
+model Roadmap {
+  id          String   @id @default(cuid())
+  userId      String
+  title       String
+  duration    Int
+  targetRating Int
+  weakTopics  String[]
+  weeks       Json
+  status      String   @default("active")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Recommendation {
+  id         String   @id @default(cuid())
+  userId     String
+  difficulty String
+  problemName String
+  platform   String
+  topic      String
+  rating     Int?
+  url        String
+  reason     String?
+  createdAt  DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, difficulty])
+}
+
+model CodeReview {
+  id              String   @id @default(cuid())
+  userId          String
+  fileName        String
+  language        String
+  sourceCode      String   @db.Text
+  timeComplexity  String?
+  spaceComplexity String?
+  edgeCases       Json?
+  optimizations   Json?
+  alternatives    Json?
+  bugs            Json?
+  codeQuality     String?
+  fullReport      Json
+  createdAt       DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Prediction {
+  id                String   @id @default(cuid())
+  userId            String
+  nextContestRating Int
+  threeMonthRating  Int
+  sixMonthRating    Int
+  confidence        Float    @default(0.75)
+  factors           Json
+  history           Json
+  createdAt         DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model ProgressReport {
+  id          String   @id @default(cuid())
+  userId      String
+  reportType  String
+  periodStart DateTime
+  periodEnd   DateTime
+  summary     String   @db.Text
+  metrics     Json
+  insights    Json
+  createdAt   DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, reportType])
+}
+
+model AnalyticsSnapshot {
+  id              String   @id @default(cuid())
+  userId          String
+  learningVelocity Float   @default(0)
+  contestConsistency Float @default(0)
+  topicDistribution Json
+  activityHeatmap Json
+  ratingForecast  Json
+  masteryCurves   Json
+  createdAt       DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+}
+
+model LearningMetrics {
+  id              String   @id @default(cuid())
+  userId          String
+  date            DateTime
+  problemsSolved  Int      @default(0)
+  contestsAttended Int     @default(0)
+  rating          Int      @default(0)
+  studyMinutes    Int      @default(0)
+  topicsStudied   String[]
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date])
+  @@index([userId, date])
+}
+
+model ChatSession {
+  id        String        @id @default(cuid())
+  userId    String
+  title     String        @default("New Chat")
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  messages  ChatMessage[]
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model ChatMessage {
+  id        String   @id @default(cuid())
+  sessionId String
+  role      String
+  content   String   @db.Text
+  createdAt DateTime @default(now())
+
+  session ChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId])
+}
