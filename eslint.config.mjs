@@ -12,6 +12,11 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Separate frontend app (own package/eslint config) and generated Prisma client:
+    "frontend/**",
+    "src/generated/**",
+    // Reference copy of the upstream project (git-ignored, not built):
+    ".audit-upstream/**",
   ]),
 ]);
 

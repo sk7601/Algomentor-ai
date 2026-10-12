@@ -3,8 +3,7 @@
 import { auth } from "@/lib/auth";
 import { failure, success, type ActionResult } from "@/lib/errors";
 import { prisma } from "@/lib/prisma";
-import { geminiService } from "@/services/gemini.service";
-import { profileRepository } from "@/services/profile.repository";
+import { aiService } from "@/services/ai.service";
 import { z } from "zod";
 
 const chatSchema = z.object({
@@ -21,8 +20,6 @@ export async function sendChatMessageAction(
 
     const parsed = chatSchema.safeParse(input);
     if (!parsed.success) return failure("Invalid message");
-
-    const profile = await profileRepository.getByUserId(session.user.id);
 
     let chatSession = parsed.data.sessionId
       ? await prisma.chatSession.findFirst({
@@ -57,11 +54,7 @@ export async function sendChatMessageAction(
       content: m.content,
     }));
 
-    const reply = await geminiService.chat(
-      parsed.data.message,
-      history,
-      profile?.geminiApiKey
-    );
+    const reply = await aiService.chat(parsed.data.message, history);
 
     await prisma.chatMessage.create({
       data: {

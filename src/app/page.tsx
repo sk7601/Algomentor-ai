@@ -57,7 +57,7 @@ export default function LandingPage() {
             {
               icon: Brain,
               title: "AI Tutor & Reviews",
-              desc: "Learn advanced algorithms and get expert code reviews powered by Gemini.",
+              desc: "Learn advanced algorithms and get expert code reviews powered by OpenRouter.",
             },
             {
               icon: Target,

@@ -3,7 +3,7 @@ from datetime import UTC, datetime
 from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.external.gemini_client import GeminiClient
+from app.external.openrouter_client import OpenRouterClient
 from app.models.user import ChatMessage, ChatSession, User
 from app.repositories.profile_repository import ChatRepository
 from app.schemas.tutor import ChatMessageCreate, ChatMessageResponse, ChatSessionCreate, ChatSessionResponse
@@ -13,7 +13,7 @@ class TutorService:
     def __init__(self, db: AsyncSession):
         self.db = db
         self.chats = ChatRepository(db)
-        self.gemini = GeminiClient()
+        self.ai = OpenRouterClient()
 
     async def create_session(self, user: User, data: ChatSessionCreate) -> ChatSessionResponse:
         session = ChatSession(user_id=user.id, title=data.title)
@@ -41,7 +41,7 @@ class TutorService:
         history = [{"role": m.role, "content": m.content} for m in session.messages]
         history.append({"role": "user", "content": data.content})
 
-        ai_data = await self.gemini.tutor_response(data.content, history)
+        ai_data = await self.ai.tutor_response(data.content, history)
         explanation = ai_data.get("explanation", ai_data.get("raw_response", ""))
         complexity = ai_data.get("complexity", "See explanation")
         examples = ai_data.get("examples", [])

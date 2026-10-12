@@ -72,7 +72,7 @@ export function Sidebar() {
         <div className="rounded-lg bg-zinc-900 p-3">
           <div className="flex items-center gap-2 text-xs text-zinc-400">
             <BookOpen className="h-3 w-3" />
-            Powered by Gemini 2.5 Flash
+            Powered by OpenRouter
           </div>
         </div>
       </div>

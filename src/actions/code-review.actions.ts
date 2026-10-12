@@ -3,8 +3,7 @@
 import { auth } from "@/lib/auth";
 import { failure, success, type ActionResult } from "@/lib/errors";
 import { prisma } from "@/lib/prisma";
-import { geminiService } from "@/services/gemini.service";
-import { profileRepository } from "@/services/profile.repository";
+import { aiService } from "@/services/ai.service";
 import type { CodeReviewResult } from "@/types";
 import { z } from "zod";
 
@@ -24,14 +23,9 @@ export async function reviewCodeAction(
     const parsed = reviewSchema.safeParse(input);
     if (!parsed.success) return failure("Invalid code submission");
 
-    const profile = await profileRepository.getByUserId(session.user.id);
     const lang = parsed.data.language === "py" ? "python" : parsed.data.language;
 
-    const review = await geminiService.reviewCode(
-      parsed.data.sourceCode,
-      lang,
-      profile?.geminiApiKey
-    );
+    const review = await aiService.reviewCode(parsed.data.sourceCode, lang);
 
     const saved = await prisma.codeReview.create({
       data: {

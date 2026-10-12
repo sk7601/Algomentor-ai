@@ -108,7 +108,7 @@ export default function TutorPage() {
         <Card className="border-border/50 bg-card/50 lg:col-span-3">
           <CardHeader>
             <CardTitle>Chat</CardTitle>
-            <CardDescription>Powered by Gemini AI</CardDescription>
+            <CardDescription>Powered by OpenRouter</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex flex-wrap gap-2">

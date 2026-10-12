@@ -19,6 +19,10 @@ node_modules/
 out/
 dist/
 *.tsbuildinfo
+next-env.d.ts
+
+# Generated Prisma client
+src/generated/
 
 # IDE
 .idea/

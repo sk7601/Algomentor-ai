@@ -13,7 +13,7 @@ Open an HTML file in a browser. Each diagram is standalone and includes its own 
 
 ## System architecture
 
-The browser runs the [Next.js frontend](frontend/app). Its [API client](frontend/lib/api.ts) sends JSON requests to the [FastAPI app](backend/app/main.py) under `/api/v1`. The [router](backend/app/api/v1/router.py) delegates to feature services, which use SQLAlchemy repositories and PostgreSQL. Profile sync calls the public Codeforces REST API, a third-party LeetCode stats API, and the LeetCode GraphQL endpoint through the [platform clients](backend/app/external/platform_clients.py). Tutor and code review call the [Gemini client](backend/app/external/gemini_client.py) when a Gemini key is configured; otherwise that client returns built-in fallback content.
+The browser runs the [Next.js frontend](frontend/app). Its [API client](frontend/lib/api.ts) sends JSON requests to the [FastAPI app](backend/app/main.py) under `/api/v1`. The [router](backend/app/api/v1/router.py) delegates to feature services, which use SQLAlchemy repositories and PostgreSQL. Profile sync calls the public Codeforces REST API, a third-party LeetCode stats API, and the LeetCode GraphQL endpoint through the [platform clients](backend/app/external/platform_clients.py). Tutor and code review call the [OpenRouter client](backend/app/external/openrouter_client.py) when an OpenRouter key is configured; otherwise that client returns built-in fallback content.
 
 The [Docker Compose file](docker-compose.yml) starts Next.js, FastAPI, PostgreSQL 16, and Redis 7. The [database session](backend/app/db/session.py) uses the async PostgreSQL driver. Redis is used by the [authentication dependency](backend/app/core/deps.py) to store and check revoked refresh-token identifiers. There is no application-data cache lookup or fill in the current backend.
 
@@ -37,7 +37,7 @@ Current development security limits: the example configuration contains a known 
 | Profiles | Fetch Codeforces, third-party LeetCode stats, and LeetCode GraphQL data; normalize submissions and ratings; write profile and topic scores | [profile_service.py](backend/app/services/profile_service.py), [platform_clients.py](backend/app/external/platform_clients.py) |
 | Analytics | Build dashboard statistics, rating chart, topic radar, and weakness heatmap from stored profile data | [analytics_service.py](backend/app/services/analytics_service.py) |
 | Study features | Generate and list roadmaps; recommend problems from the catalog | [roadmap_service.py](backend/app/services/roadmap_service.py), [recommendation_service.py](backend/app/services/recommendation_service.py) |
-| AI features | Tutor conversations and code reviews, with optional Gemini calls and fallback content | [tutor_service.py](backend/app/services/tutor_service.py), [code_review_service.py](backend/app/services/code_review_service.py), [gemini_client.py](backend/app/external/gemini_client.py) |
+| AI features | Tutor conversations and code reviews, with optional OpenRouter calls and fallback content | [tutor_service.py](backend/app/services/tutor_service.py), [code_review_service.py](backend/app/services/code_review_service.py), [openrouter_client.py](backend/app/external/openrouter_client.py) |
 | Predictions | Rating forecasts and interview-readiness scores | [prediction_service.py](backend/app/services/prediction_service.py) |
 | Persistence | SQLAlchemy models and repository methods; Alembic migrations | [models/user.py](backend/app/models/user.py), [repositories](backend/app/repositories), [alembic](backend/alembic) |
 
@@ -65,7 +65,7 @@ No live API key can be derived from this repository. Copy [.env.example](.env.ex
 
 | Variable | What to provide | Needed for |
 | --- | --- | --- |
-| `GEMINI_API_KEY` | A key created in your Google AI project | Live Gemini tutor and code review; optional because the code has fallback responses |
+| `OPENROUTER_API_KEY` | A key created in your OpenRouter account | Live OpenRouter tutor and code review; optional because the code has fallback responses |
 | `JWT_SECRET_KEY` | A unique, long cryptographically random secret that you generate | Signing and verifying access and refresh JWTs |
 | `POSTGRES_PASSWORD` | A unique database password that you choose | Docker PostgreSQL container |
 | `POSTGRES_USER`, `POSTGRES_DB` | Database account and database names that you choose | Docker PostgreSQL container |

@@ -1,4 +1,4 @@
-import { generateGeminiText, parseJsonFromText } from "@/lib/gemini";
+import { generateOpenRouterText, parseJsonFromText } from "@/lib/openrouter";
 import { getCached, setCached } from "@/lib/redis";
 import type {
   CodeReviewResult,
@@ -6,13 +6,12 @@ import type {
   TutorResponse,
 } from "@/types";
 
-export class GeminiService {
+export class AIService {
   async generateRoadmap(
     currentRating: number,
     targetRating: number,
     weakTopics: string[],
-    duration: 4 | 8 | 12,
-    apiKey?: string | null
+    duration: 4 | 8 | 12
   ): Promise<RoadmapPlan> {
     const cacheKey = `roadmap:${currentRating}:${targetRating}:${duration}:${weakTopics.join(",")}`;
     const cached = await getCached<RoadmapPlan>(cacheKey);
@@ -42,13 +41,13 @@ Return ONLY valid JSON with this structure:
   ]
 }`;
 
-    const text = await generateGeminiText(prompt, apiKey);
+    const text = await generateOpenRouterText(prompt, true);
     const plan = parseJsonFromText<RoadmapPlan>(text);
     await setCached(cacheKey, plan);
     return plan;
   }
 
-  async tutorExplain(topic: string, apiKey?: string | null): Promise<TutorResponse> {
+  async tutorExplain(topic: string): Promise<TutorResponse> {
     const prompt = `You are an expert competitive programming tutor. Explain "${topic}" comprehensively.
 
 Return ONLY valid JSON:
@@ -61,14 +60,13 @@ Return ONLY valid JSON:
   "practiceProblems": [{"name": "problem", "platform": "Codeforces", "url": "https://..."}]
 }`;
 
-    const text = await generateGeminiText(prompt, apiKey);
+    const text = await generateOpenRouterText(prompt, true);
     return parseJsonFromText<TutorResponse>(text);
   }
 
   async reviewCode(
     sourceCode: string,
-    language: string,
-    apiKey?: string | null
+    language: string
   ): Promise<CodeReviewResult> {
     const prompt = `You are an expert code reviewer for competitive programming. Review this ${language} code:
 
@@ -88,11 +86,14 @@ Return ONLY valid JSON:
   "summary": "overall summary"
 }`;
 
-    const text = await generateGeminiText(prompt, apiKey);
+    const text = await generateOpenRouterText(prompt, true);
     return parseJsonFromText<CodeReviewResult>(text);
   }
 
-  async chat(message: string, history: Array<{ role: string; content: string }>, apiKey?: string | null): Promise<string> {
+  async chat(
+    message: string,
+    history: Array<{ role: string; content: string }>
+  ): Promise<string> {
     const context = history
       .slice(-10)
       .map((m) => `${m.role}: ${m.content}`)
@@ -107,8 +108,8 @@ User: ${message}
 
 Provide a helpful, detailed response about competitive programming. Include examples when relevant.`;
 
-    return generateGeminiText(prompt, apiKey);
+    return generateOpenRouterText(prompt);
   }
 }
 
-export const geminiService = new GeminiService();
+export const aiService = new AIService();

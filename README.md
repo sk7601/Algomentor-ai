@@ -11,7 +11,7 @@ AlgoMentor/
 │       ├── api/v1/       # REST endpoints
 │       ├── core/         # Config, security, deps
 │       ├── db/           # Database session
-│       ├── external/     # Codeforces, LeetCode, Gemini
+│       ├── external/     # Codeforces, LeetCode, OpenRouter
 │       ├── ml/           # Rating prediction models
 │       ├── models/       # SQLAlchemy models
 │       ├── repositories/ # Data access layer
@@ -35,7 +35,7 @@ AlgoMentor/
 | Database | PostgreSQL 16 |
 | Cache | Redis 7 |
 | Auth | JWT access + refresh tokens |
-| AI | Google Gemini API |
+| AI | OpenRouter API |
 | ML | scikit-learn (Ridge regression) |
 | Deploy | Docker, Docker Compose |
 
@@ -46,7 +46,7 @@ AlgoMentor/
 3. **Topic Analysis** — DP, Graphs, Trees, Greedy, Binary Search, Math, Strings, Implementation
 4. **Dashboard** — Rating graph, topic radar, weakness heatmap, solved stats
 5. **Roadmap Generator** — 4/8/12 week plans based on rating and weak topics
-6. **AI Tutor** — Chat interface powered by Gemini
+6. **AI Tutor** — Chat interface powered by OpenRouter
 7. **AI Code Review** — Complexity, bugs, edge cases, optimizations
 8. **Recommendations** — Easy/Medium/Hard problems by weak topics
 9. **Contest Predictor** — ML rating forecasts (next contest, 3mo, 6mo)
@@ -57,7 +57,7 @@ AlgoMentor/
 ```bash
 # 1. Clone and configure
 cp .env.example .env
-# Edit .env — set GEMINI_API_KEY for full AI features
+# Edit .env — set OPENROUTER_API_KEY for full AI features
 
 # 2. Start all services
 docker compose up --build
@@ -108,7 +108,7 @@ npm run dev
 | `DATABASE_URL` | PostgreSQL async connection string |
 | `REDIS_URL` | Redis connection URL |
 | `JWT_SECRET_KEY` | Secret for signing JWT tokens |
-| `GEMINI_API_KEY` | Google Gemini API key |
+| `OPENROUTER_API_KEY` | OpenRouter API key (server-side only) |
 | `NEXT_PUBLIC_API_URL` | Backend API URL for frontend |
 
 ## API Endpoints

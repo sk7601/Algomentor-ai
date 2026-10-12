@@ -1,6 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.external.gemini_client import GeminiClient
+from app.external.openrouter_client import OpenRouterClient
 from app.models.user import CodeReview, User
 from app.repositories.profile_repository import CodeReviewRepository
 from app.schemas.code_review import CodeReviewAnalysis, CodeReviewRequest, CodeReviewResponse
@@ -10,10 +10,10 @@ class CodeReviewService:
     def __init__(self, db: AsyncSession):
         self.db = db
         self.reviews = CodeReviewRepository(db)
-        self.gemini = GeminiClient()
+        self.ai = OpenRouterClient()
 
     async def review(self, user: User, data: CodeReviewRequest) -> CodeReviewResponse:
-        analysis_raw = await self.gemini.review_code(data.source_code, data.language, data.problem_title)
+        analysis_raw = await self.ai.review_code(data.source_code, data.language, data.problem_title)
         analysis = CodeReviewAnalysis(
             time_complexity=analysis_raw.get("time_complexity", "Unknown"),
             space_complexity=analysis_raw.get("space_complexity", "Unknown"),

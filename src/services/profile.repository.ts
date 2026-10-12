@@ -18,7 +18,6 @@ export class ProfileRepository {
       accuracy?: number;
       targetRating?: number;
       bio?: string;
-      geminiApiKey?: string;
       theme?: string;
     }
   ) {

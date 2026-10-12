@@ -19,7 +19,6 @@ export function SettingsView() {
   const [lcUser, setLcUser] = useState("");
   const [targetRating, setTargetRating] = useState(1600);
   const [bio, setBio] = useState("");
-  const [geminiKey, setGeminiKey] = useState("");
   const [saving, setSaving] = useState(false);
   const [syncing, setSyncing] = useState(false);
 
@@ -30,7 +29,6 @@ export function SettingsView() {
       leetcodeUsername: lcUser || undefined,
       targetRating,
       bio: bio || undefined,
-      geminiApiKey: geminiKey || undefined,
       theme: (theme as "dark" | "light" | "system") || "dark",
     });
     setSaving(false);
@@ -55,7 +53,6 @@ export function SettingsView() {
         <TabsList>
           <TabsTrigger value="profile">Profile</TabsTrigger>
           <TabsTrigger value="appearance">Appearance</TabsTrigger>
-          <TabsTrigger value="api">API Keys</TabsTrigger>
           <TabsTrigger value="account">Account</TabsTrigger>
         </TabsList>
 
@@ -111,30 +108,6 @@ export function SettingsView() {
                   </Button>
                 ))}
               </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="api">
-          <Card>
-            <CardHeader>
-              <CardTitle>API Key Management</CardTitle>
-              <CardDescription>Use your own Gemini API key for AI features (optional)</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label>Gemini API Key</Label>
-                <Input
-                  type="password"
-                  value={geminiKey}
-                  onChange={(e) => setGeminiKey(e.target.value)}
-                  placeholder="AIza..."
-                />
-                <p className="text-xs text-zinc-500">
-                  Falls back to server GEMINI_API_KEY if not set. Get a key at Google AI Studio.
-                </p>
-              </div>
-              <Button onClick={handleSave} disabled={saving}>Save API Key</Button>
             </CardContent>
           </Card>
         </TabsContent>

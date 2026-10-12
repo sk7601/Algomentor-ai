@@ -1,24 +1,42 @@
 import json
 import re
 
-import google.generativeai as genai
+import httpx
 
 from app.core.config import settings
 
+OPENROUTER_ENDPOINT = "https://openrouter.ai/api/v1/chat/completions"
+DEFAULT_OPENROUTER_MODEL = "anthropic/claude-haiku-5.5"
 
-class GeminiClient:
+
+class OpenRouterClient:
     def __init__(self) -> None:
-        if settings.GEMINI_API_KEY:
-            genai.configure(api_key=settings.GEMINI_API_KEY)
-            self.model = genai.GenerativeModel("gemini-1.5-flash")
-        else:
-            self.model = None
+        self.api_key = settings.OPENROUTER_API_KEY
+        self.model = settings.OPENROUTER_MODEL or DEFAULT_OPENROUTER_MODEL
 
     async def generate(self, prompt: str) -> str:
-        if self.model is None:
+        if not self.api_key:
             return self._fallback_response(prompt)
-        response = await self.model.generate_content_async(prompt)
-        return response.text or self._fallback_response(prompt)
+        async with httpx.AsyncClient(timeout=25.0) as client:
+            response = await client.post(
+                OPENROUTER_ENDPOINT,
+                headers={
+                    "Authorization": f"Bearer {self.api_key}",
+                    "Content-Type": "application/json",
+                },
+                json={
+                    "model": self.model,
+                    "messages": [{"role": "user", "content": prompt}],
+                    "stream": False,
+                },
+            )
+        response.raise_for_status()
+        data = response.json()
+        try:
+            text = data["choices"][0]["message"]["content"]
+        except (KeyError, IndexError, TypeError):
+            return self._fallback_response(prompt)
+        return text or self._fallback_response(prompt)
 
     def _fallback_response(self, prompt: str) -> str:
         if "code review" in prompt.lower() or "analyze this code" in prompt.lower():

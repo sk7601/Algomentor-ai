@@ -3,7 +3,7 @@
 import { auth } from "@/lib/auth";
 import { failure, success, type ActionResult } from "@/lib/errors";
 import { prisma } from "@/lib/prisma";
-import { geminiService } from "@/services/gemini.service";
+import { aiService } from "@/services/ai.service";
 import { profileRepository } from "@/services/profile.repository";
 import { analyticsService } from "@/services/analytics.service";
 import type { RoadmapPlan } from "@/types";
@@ -39,12 +39,11 @@ export async function generateRoadmapAction(
     const weakTopics = analyticsService.getWeakTopics(topicAnalysis);
     const currentRating = profile?.currentRating ?? 1200;
 
-    const plan = await geminiService.generateRoadmap(
+    const plan = await aiService.generateRoadmap(
       currentRating,
       parsed.data.targetRating,
       weakTopics,
-      parsed.data.duration,
-      profile?.geminiApiKey
+      parsed.data.duration
     );
 
     await prisma.roadmap.create({

@@ -16,7 +16,6 @@ const settingsSchema = z.object({
   leetcodeUsername: z.string().optional(),
   targetRating: z.coerce.number().min(800).max(3500).optional(),
   bio: z.string().max(500).optional(),
-  geminiApiKey: z.string().optional(),
   theme: z.enum(["dark", "light", "system"]).optional(),
 });
 
